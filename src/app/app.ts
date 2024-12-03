@@ -40,7 +40,7 @@ export const startApp = async (config: Config) => {
     })
     app.use(fileUpload({}))
     app.use("/api/v1/church", userRouter)
-    // app.use("/api/v1/church", teamsRouter)
+    app.use("/api/v1/church", teamsRouter)
     app.use(handleError)
     app.all("*", (req, res) => {
       res.status(404).json({

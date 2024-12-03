@@ -23,7 +23,7 @@ import {
   AdminSelect
 } from "./../models/shemas/adminSchema"
 import bcrypt from "bcryptjs"
-import { eq } from "drizzle-orm"
+import { and, desc, eq } from "drizzle-orm"
 // import sendEmailToUser from "../utils/email"
 export class AdminServices {
   login = async (input: { adminID: string; password: string }) => {
@@ -191,65 +191,78 @@ export class AdminServices {
     }
   }
 
-  // adminSendsSecreteCode = async (userId: string, code: string) => {
-  //   try {
-  //     const findAdmin = await this.queryDB.code
-  //       .findOne({
-  //         user: userId,
-  //         code,
-  //         isUsed: false
-  //       })
-  //       .sort({
-  //         createdAt: -1
-  //       })
+  adminSendsSecreteCode = async (userId: string, code: string) => {
+    try {
+      const [findAdmin] = await db
+        .select()
+        .from(codeTable)
+        .where(
+          and(
+            eq(codeTable.admin_id, userId),
+            eq(codeTable.code, code),
+            eq(codeTable.isUsed, false)
+          )
+        )
+        .orderBy(desc(codeTable.created_at))
+        .limit(1)
 
-  //     // console.log(findAdmin)
+      // console.log(findAdmin)
 
-  //     if (!findAdmin) throw createError("Invalid or expired code", 404)
+      if (!findAdmin) throw createError("Invalid or expired code", 404)
 
-  //     findAdmin.isUsed = true
-  //     await findAdmin.save()
+      await db
+        .update(codeTable)
+        .set({ isUsed: true, code: null })
+        .where(eq(codeTable.id, findAdmin.id))
 
-  //     return {
-  //       status: "success"
-  //     }
-  //   } catch (err) {
-  //     throw err
-  //   }
-  // }
+      return {
+        status: "success"
+      }
+    } catch (err) {
+      throw err
+    }
+  }
 
-  // adminResetPassword = async (userId: Types.ObjectId, password: string) => {
-  //   try {
-  //     const findAdmin = await this.queryDB.adminModel.findById(userId)
-  //     // console.log(findAdmin)
+  adminResetPassword = async (userId: string, password: string) => {
+    try {
+      const [findAdmin] = await db
+        .select()
+        .from(adminSchema)
+        .where(eq(adminSchema.id, userId))
 
-  //     if (!findAdmin) throw createError("User does not exist", 404)
+      console.log(findAdmin)
 
-  //     findAdmin.password = password
-  //     await findAdmin.save()
+      if (!findAdmin) throw createError("User does not exist", 404)
 
-  //     const res = sendEmailFunction({
-  //       name: findAdmin?.lastName,
-  //       email: findAdmin?.email
-  //     }) as {
-  //       text: string
-  //       email: string
-  //       message: string
-  //       subject: string
-  //     }
+      const hashedPassword = await bcrypt.hash(password, 10)
 
-  //     // await sendEmailToUser({
-  //     //   email: res.email,
-  //     //   message: res.message,
-  //     //   subject: res.subject,
-  //     //   text: res.text
-  //     // })
-  //     return {
-  //       status: "success",
-  //       message: "Password reset successful"
-  //     }
-  //   } catch (err) {
-  //     throw err
-  //   }
-  // }
+      await db
+        .update(adminSchema)
+        .set({ password: hashedPassword })
+        .where(eq(adminSchema.id, userId))
+
+      const res = sendEmailFunction({
+        name: findAdmin?.lastName,
+        email: findAdmin?.email
+      }) as {
+        text: string
+        email: string
+        message: string
+        subject: string
+      }
+
+      // await sendEmailToUser({
+      //   email: res.email,
+      //   message: res.message,
+      //   subject: res.subject,
+      //   text: res.text
+      // })
+      return {
+        status: "success",
+        message: "Password reset successful"
+      }
+    } catch (err) {
+      throw err
+    }
+  }
 }

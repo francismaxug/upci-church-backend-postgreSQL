@@ -16,7 +16,6 @@ import {
 import Apiip from "apiip.net"
 import resultsLocation from "../location"
 import { IGeoLocation, IUserAdmin } from "../types/admin"
-import UserLocation from "../models/geolocationModel"
 import { permit } from "../utils/permission"
 
 declare module "express-serve-static-core" {
@@ -154,8 +153,7 @@ const getAdminProfileInfo = catchAsync(
       languages: req.user.languages,
       address: req.user.address,
       zipCode: req.user.zipCode,
-      createdAt: req.user.createdAt,
-     
+      createdAt: req.user.createdAt
     })
   }
 )
@@ -276,32 +274,33 @@ const requestForCode = catchAsync(
     return res.status(200).json(admin)
   }
 )
-// const checkCodeSent = catchAsync(
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     // const { country, placeOfResidence, email, phoneNumber, position, region } = req.body
 
-//     const admin = await req.context?.services?.userAdmin.adminSendsSecreteCode(
-//       req.user._id,
-//       req.body.code
-//     )
-//     // console.log(admin)
+const checkCodeSent = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    // const { country, placeOfResidence, email, phoneNumber, position, region } = req.body
 
-//     return res.status(200).json(admin)
-//   }
-// )
-// const resetPassword = catchAsync(
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     // const { country, placeOfResidence, email, phoneNumber, position, region } = req.body
+    const admin = await req.context?.services?.userAdmin.adminSendsSecreteCode(
+      req.user.id,
+      req.body.code
+    )
+    // console.log(admin)
 
-//     const admin = await req.context?.services?.userAdmin.adminResetPassword(
-//       req.user._id,
-//       req.body?.newPassword
-//     )
-//     // console.log(admin)
+    return res.status(200).json(admin)
+  }
+)
 
-//     return res.status(200).json(admin)
-//   }
-// )
+const resetPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    // const { country, placeOfResidence, email, phoneNumber, position, region } = req.body
+    const admin = await req.context?.services?.userAdmin.adminResetPassword(
+      req.user.id,
+      req.body?.newPassword
+    )
+    // console.log(admin)
+
+    return res.status(200).json(admin)
+  }
+)
 
 export {
   adminLogin,
@@ -310,6 +309,6 @@ export {
   getAdminProfileInfo,
   adminUpdateProfile,
   requestForCode,
-  // checkCodeSent,
-  // resetPassword
+  checkCodeSent,
+  resetPassword
 }

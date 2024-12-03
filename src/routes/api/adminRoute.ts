@@ -5,8 +5,8 @@ import {
   getAdminProfileInfo,
   adminUpdateProfile,
   requestForCode,
-  // checkCodeSent,
-  // resetPassword
+  checkCodeSent,
+  resetPassword
 } from "../../controllers/adminUser"
 import express from "express"
 import { protect } from "../../middleware/auth"
@@ -19,7 +19,7 @@ router.get("/getCurrentAdmin", protect, getCurrentAdmin)
 router.get("/admin/profileInfo", protect, getAdminProfileInfo)
 router.patch("/admin/updateprofile", protect, adminUpdateProfile)
 router.post("/admin/get-reset-code", requestForCode)
-// router.post("/admin/check-reset-code", protect, checkCodeSent)
-// router.post("/admin/reset-password", protect, resetPassword)
+router.post("/admin/check-reset-code", protect, checkCodeSent)
+router.post("/admin/reset-password", protect, resetPassword)
 
 export default router

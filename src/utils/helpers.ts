@@ -46,7 +46,7 @@ export function generateRandomCode() {
 }
 
 export const message_template = (name: string, code: string) => {
-  return `Hello ${name}, your password reset code is: ${code}. This code will expire in 10 minutes. Kindly ignore this message if you did not request for a password reset`
+  return `Hello ${name}, your password reset code is: ${code}.\nThis code will expire in 10 minutes. Kindly ignore this message if you did not request for a password reset`
 }
 
 //  function generateRandomCode() {
