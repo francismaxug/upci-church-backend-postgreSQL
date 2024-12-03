@@ -1,0 +1,1 @@
+ALTER TABLE "useradmin" ADD COLUMN "line1" text[] DEFAULT ARRAY[]::text[];

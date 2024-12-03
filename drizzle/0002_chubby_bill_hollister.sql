@@ -1,0 +1,1 @@
+ALTER TABLE "useradmin" DROP COLUMN IF EXISTS "line1";
