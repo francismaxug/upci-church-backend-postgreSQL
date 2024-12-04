@@ -23,7 +23,7 @@ import {
   AdminSelect
 } from "./../models/shemas/adminSchema"
 import bcrypt from "bcryptjs"
-import { and, desc, eq } from "drizzle-orm"
+import { and, desc, eq, lte, sql } from "drizzle-orm"
 // import sendEmailToUser from "../utils/email"
 export class AdminServices {
   login = async (input: { adminID: string; password: string }) => {
@@ -200,7 +200,11 @@ export class AdminServices {
           and(
             eq(codeTable.admin_id, userId),
             eq(codeTable.code, code),
-            eq(codeTable.isUsed, false)
+            eq(codeTable.isUsed, false),
+            lte(
+              sql`current_timestamp- ${codeTable.created_at}`,
+              sql`interval 10 minutes`
+            )
           )
         )
         .orderBy(desc(codeTable.created_at))
