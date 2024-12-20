@@ -1,64 +1,42 @@
-// import nodemailer from "nodemailer"
-// import nodemailerSendgrid from "nodemailer-sendgrid"
-// const sendEmailToUser = async (options: {
-//   email: string
-//   text: string
-//   message: string
-//   subject: string
-// }) => {
-//   const mailOptions = {
-//     apiKey:
-//       "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"
-//   }
-//   const transporter = nodemailer.createTransport(
-//     nodemailerSendgrid(mailOptions)
-//   )
+import nodemailer from "nodemailer"
 
-//   const sendIt = {
-//     to: options.email,
-//     from: "fatinga@st.ug.edu.gh",
-//     subject: options.subject,
-//     text: options.text,
-//     html: options.message
-//   }
-
-//   return await new Promise((resolve, reject) => {
-//     // send mail
-//     transporter.sendMail(sendIt, (err, info) => {
-//       if (err) {
-//         console.error(err)
-//         reject(err)
-//       } else {
-//         console.log(info)
-//         resolve(info)
-//       }
-//     })
-//   })
-// }
-
-// export default sendEmailToUser
-
-import FormData from "form-data"
-import Mailgun from "mailgun.js"
-const mailgun = new Mailgun(FormData)
-const mg = mailgun.client({
-  username: "api",
-  key: process.env.MAILGUN_API_KEY || "key-yourkeyhere"
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_SERVER,
+  port: 587,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  }
 })
 
-const send = async () => {
+export const sendEmail = async (optios: {
+  text: string
+  subject: string
+  to: string
+}) => {
+  const mailOptions = {
+    from: process.env.SENDER_EMAIL,
+    to: optios.to,
+    subject: optios.subject,
+    text: optios.text
+  }
+
   try {
-    const res = await mg.messages.create("sandbox-123.mailgun.org", {
-      from: "Excited User <mailgun@sandbox75143d8031ff4d60a507964de1f5a251.mailgun.org>",
-      to: ["atingafrancis123@gmail.com"],
-      subject: "Hello",
-      text: "Testing some Mailgun awesomeness!",
-      html: "<h1>Testing some Mailgun awesomeness!</h1>"
-    })
-    console.log(res) // logs response data
+    const res = await transporter.sendMail(mailOptions)
+    // console.log(res)
   } catch (error) {
-    console.log(error) // logs any error
+    console.log(error)
   }
 }
+export default transporter
 
-export default send
+//Send mail
+
+// const mailOptions = {
+//   from: process.env.SENDER_EMAIL,
+//   to: "emauil@email.com",
+//   subject: "Password reset",
+//   text: "Hey you have successfully reset your password"
+// }
+
+// await transporter.sendMail(mailOptions)

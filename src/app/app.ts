@@ -10,6 +10,7 @@ import { Config } from "../config/serve"
 import { IAppContext } from "../types/app"
 import { startServices } from "../services/serve"
 import teamsRouter from "../routes/api/teams"
+import churchMemberRouter from "../routes/api/churchMember"
 // import { pool } from "./../models"
 
 export const app = express()
@@ -41,6 +42,7 @@ export const startApp = async (config: Config) => {
     app.use(fileUpload({}))
     app.use("/api/v1/church", userRouter)
     app.use("/api/v1/church", teamsRouter)
+    app.use("/api/v1/church", churchMemberRouter)
     app.use(handleError)
     app.all("*", (req, res) => {
       res.status(404).json({

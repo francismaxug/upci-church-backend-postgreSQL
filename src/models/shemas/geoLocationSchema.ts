@@ -21,7 +21,9 @@ export const geoLocationTable = pgTable("geolocation", {
   countryCode: varchar({ length: 30 }),
   name: varchar({ length: 30 }),
   role: varchar({ length: 30 }),
-  created_at: timestamp().defaultNow()
+  created_at: timestamp({
+    withTimezone: true
+  }).defaultNow()
 })
 
 export const insertCode = createInsertSchema(geoLocationTable)

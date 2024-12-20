@@ -15,7 +15,6 @@ const getAllMembers = catchAsync(async (req: Request, res: Response) => {
         eq(adminSchema.role, "User")
       )
     )
-
   console.log(users)
   return res.status(200).json(users)
 })

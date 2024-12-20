@@ -22,6 +22,62 @@
       "when": 1733254490859,
       "tag": "0002_chubby_bill_hollister",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1734575169357,
+      "tag": "0003_workable_the_professor",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1734576376145,
+      "tag": "0004_lumpy_war_machine",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1734576475469,
+      "tag": "0005_fast_namor",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1734576558081,
+      "tag": "0006_misty_tarot",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1734576718630,
+      "tag": "0007_flat_lizard",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1734576932871,
+      "tag": "0008_loose_radioactive_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1734579118042,
+      "tag": "0009_grey_warpath",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1734661917533,
+      "tag": "0010_steep_plazm",
+      "breakpoints": true
     }
   ]
 }

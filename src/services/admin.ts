@@ -10,6 +10,7 @@ import {
 } from "../types/admin"
 import { IAppContext, InitAdmin } from "../types/app"
 import createError from "../utils/appError"
+import { sendEmail } from "../utils/email"
 import {
   generateRandomCode,
   message_template,
@@ -23,7 +24,7 @@ import {
   AdminSelect
 } from "./../models/shemas/adminSchema"
 import bcrypt from "bcryptjs"
-import { and, desc, eq, lte, sql } from "drizzle-orm"
+import { and, desc, eq, lt, lte, sql } from "drizzle-orm"
 // import sendEmailToUser from "../utils/email"
 export class AdminServices {
   login = async (input: { adminID: string; password: string }) => {
@@ -64,11 +65,16 @@ export class AdminServices {
   saveLocationDetails = async (location: IGeoLocation, admin: string) => {
     try {
       const [user] = await db
-        .select()
+        .select({
+          id: adminSchema.id,
+          lastName: adminSchema.lastName,
+          firstName: adminSchema.firstName,
+          role: adminSchema.role
+        })
         .from(adminSchema)
         .where(eq(adminSchema.adminID, admin))
 
-      console.log(user)
+      // console.log(user)
 
       await db.insert(geoLocationTable).values({
         admin_id: user?.id,
@@ -166,6 +172,7 @@ export class AdminServices {
 
       const message = message_template(findAdmin?.lastName, code as string)
       const isSent = await sendSMS(message, input)
+      
 
       // console.log(isSent)
       if (!isSent) throw createError("Failed to send SMS", 500)
@@ -201,16 +208,16 @@ export class AdminServices {
             eq(codeTable.admin_id, userId),
             eq(codeTable.code, code),
             eq(codeTable.isUsed, false),
-            lte(
-              sql`current_timestamp- ${codeTable.created_at}`,
-              sql`interval 10 minutes`
+            lt(
+              sql`current_timestamp - ${codeTable.created_at}`,
+              sql`interval '10 minutes'`
             )
           )
         )
         .orderBy(desc(codeTable.created_at))
         .limit(1)
 
-      // console.log(findAdmin)
+      console.log(findAdmin)
 
       if (!findAdmin) throw createError("Invalid or expired code", 404)
 
@@ -245,15 +252,11 @@ export class AdminServices {
         .set({ password: hashedPassword })
         .where(eq(adminSchema.id, userId))
 
-      const res = sendEmailFunction({
-        name: findAdmin?.lastName,
-        email: findAdmin?.email
-      }) as {
-        text: string
-        email: string
-        message: string
-        subject: string
-      }
+      await sendEmail({
+        text: "You have successfully reset your password",
+        subject: "Password reset",
+        to: findAdmin?.email as string
+      })
 
       // await sendEmailToUser({
       //   email: res.email,
